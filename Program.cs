@@ -174,6 +174,38 @@ app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
 });
 #endregion
 
+#region Update ServiceTicket Endpoint
+app.MapPut("/servicetickets/{id}", (int id, ServiceTicket serviceTicket) =>
+{
+    // find requested ticket to update
+    ServiceTicket ticketToUpdate = serviceTickets.FirstOrDefault(st => st.Id == id);
+    // grab index of found ticket
+    int ticketIndex = serviceTickets.IndexOf(ticketToUpdate);
+    // if no such ticket, send back a not found result
+    if (ticketToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    // if id in request route doesn't match id from request body ticket, send back a bad request result
+    if (id != serviceTicket.Id)
+    {
+        return Results.BadRequest();
+    }
+    // change found ticket to sent ticket
+    serviceTickets[ticketIndex] = serviceTicket;
+    return Results.Ok();
+});
+#endregion
+
+#region Complete ServiceTicket Endpoint
+app.MapPost("/servicetickets/{id}/complete", (int id) =>
+{
+    // get requested service ticket and mark complete
+    ServiceTicket ticketToComplete = serviceTickets.FirstOrDefault(st => st.Id == id);
+    ticketToComplete.DateCompleted = DateTime.Today;
+});
+#endregion
+
 #region Delete ServiceTicket Endpoint
 app.MapDelete("/servicetickets/{id}", (int id) =>
 {
