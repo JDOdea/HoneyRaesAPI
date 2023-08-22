@@ -164,4 +164,13 @@ app.MapGet("/servicetickets/{id}", (int id) =>
 });
 #endregion
 
+#region Create ServiceTicket Endpoint
+app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
+{
+    // creates a new id (when we get to it later, our SQL database will do this for us like JSON Server did!)
+    serviceTicket.Id = serviceTickets.Count > 0 ? serviceTickets.Max(st => st.Id) + 1 : 1;
+    serviceTickets.Add(serviceTicket);
+    return serviceTicket;
+});
+#endregion
 app.Run();
