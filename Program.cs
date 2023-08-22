@@ -1,5 +1,92 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
+using HoneyRaesAPI.Models;
+
+List<Customer> customers = new List<Customer> 
+{
+    new Customer()
+    {
+        Id = 1,
+        Name = "Josh Baugh",
+        Address = "1201 North Way"
+    },
+    new Customer()
+    {
+        Id = 2,
+        Name = "Chris Mills",
+        Address = "546 Vista Way"
+    },
+    new Customer()
+    {
+        Id = 3,
+        Name = "Desmond Haynes",
+        Address = "142 Pic Blvd"
+    },
+    new Customer()
+    {
+        Id = 4,
+        Name = "Kenny Clayton",
+        Address = "896 Ocean Ave"
+    }
+};
+List<Employee> employees = new List<Employee> 
+{
+    new Employee()
+    {
+        Id = 1,
+        Name = "Trenton Guffey",
+        Specialty = "Computers"
+    },
+    new Employee()
+    {
+        Id = 2,
+        Name = "Ryan Mathis",
+        Specialty = "Mobile"
+    }
+};
+List<ServiceTicket> serviceTickets = new List<ServiceTicket> 
+{
+    new ServiceTicket()
+    {
+        Id = 1,
+        CustomerId = 2,
+        Description = "Phone screen broken",
+        Emergency = false
+    },
+    new ServiceTicket()
+    {
+        Id = 2,
+        CustomerId = 1,
+        EmployeedId = 1,
+        Description = "Laptop overheating",
+        Emergency = false,
+        DateCompleted = new DateTime(2023, 08, 20)
+    },
+    new ServiceTicket()
+    {
+        Id = 3,
+        CustomerId = 4,
+        EmployeedId = 2,
+        Description = "Phone keeps restarting",
+        Emergency = true
+    },
+    new ServiceTicket()
+    {
+        Id = 4,
+        CustomerId = 3,
+        EmployeedId = 1,
+        Description = "Computer has a deadly virus",
+        Emergency = true,
+        DateCompleted = new DateTime(2023, 08, 14)
+    },
+    new ServiceTicket()
+    {
+        Id = 5,
+        CustomerId = 2,
+        Description = "The internet turned off",
+        Emergency = true
+    }
+};
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,34 +112,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/servicetickets", () =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+   return serviceTickets; 
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/servicetickets/{id}", (int id) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.MapGet("/hello", () => 
-{
-    return "hello";
+    return serviceTickets.FirstOrDefault(st => st.Id == id);
 });
 
 app.Run();
-
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
