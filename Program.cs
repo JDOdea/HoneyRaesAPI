@@ -167,10 +167,26 @@ app.MapGet("/servicetickets/{id}", (int id) =>
 #region Create ServiceTicket Endpoint
 app.MapPost("/servicetickets", (ServiceTicket serviceTicket) =>
 {
-    // creates a new id (when we get to it later, our SQL database will do this for us like JSON Server did!)
+    // creates a new id
     serviceTicket.Id = serviceTickets.Count > 0 ? serviceTickets.Max(st => st.Id) + 1 : 1;
     serviceTickets.Add(serviceTicket);
     return serviceTicket;
 });
 #endregion
+
+#region Delete ServiceTicket Endpoint
+app.MapDelete("/servicetickets/{id}", (int id) =>
+{
+    // deletes a ServiceTicket
+    ServiceTicket serviceTicket = serviceTickets.FirstOrDefault(sv => sv.Id == id);
+    if (serviceTicket == null)
+    {
+        return Results.NotFound();
+    }
+    serviceTickets.RemoveAt(id - 1);
+    return Results.Ok();
+});
+#endregion
+
+
 app.Run();
